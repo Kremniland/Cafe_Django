@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="row row-cols-1 row-cols-md-2 g-2">
+
+            {% for coffe in list_coffe %}
+                <div class="col">
+                    <div class="card shadow-sm">
+
+                        {% if coffe.image %}
+                            <img src="{{ coffe.image.url }}" class="card-img-top" height="450" alt="...">
+                        {% else %}
+                            <img src="{% static 'image/coffe_1.jpg' %}" class="card-img-top" alt="...">
+                        {% endif %}
+                        <div class="card-body">
+                            <p class="card-text">{{ coffe.name }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a href="{% url 'detail_coffe' coffe.pk %}" type="button"
+                                       class="btn btn-sm btn-outline-secondary">Подробнее...</a>
+                                </div>
+                                <small class="text-muted">{{ book.price }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
+
+    <!-- <h1>list_coffe.html</h1>
+    {% for coffe in list_coffe %}
+        <a href="{% url 'list_coffe' %}{{ coffe.id }}"><h2>{{ coffe.name }}</h2></a>
+    {% endfor %} -->

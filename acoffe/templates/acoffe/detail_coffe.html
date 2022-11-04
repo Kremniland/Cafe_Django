@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <h2>{{ detail_coffe.name }}</h2>
+    <img src="{{ detail_coffe.image.url }}" width="300" alt="">
+    <h3>Цена: {{ detail_coffe.price }}</h3>
+    <h3>Описание: {{ detail_coffe.description }}</h3>
+    <h3>Рецепт: {{ detail_coffe.recipe }}</h3>
+{% endblock %}
