@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <h1> Ошибка!</h1>
+    <a href="{% url 'list_coffe' %}" class="btn btn-success"> Возврат к меню</a>
+    {{ message }}
+
+{% endblock %}

@@ -115,3 +115,11 @@ class CoffeViewSet(viewsets.ModelViewSet):
     queryset = coffe.objects.all()
     # print(queryset)
     serializer_class = CoffeSerializer
+
+# ERROR
+
+def error_404(request, exception):
+    response = render(request, 'acoffe/error/error.html', {'title': 'Страница не найдена', 'message': exception})
+    # При переопределении вернет статусный код
+    response.status_code = 404
+    return response
