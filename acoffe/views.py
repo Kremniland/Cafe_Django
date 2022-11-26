@@ -9,9 +9,16 @@ from django.core.paginator import Paginator
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout
 
-from acoffe.forms import RegistrationForm, LoginForm
+from acoffe.forms import RegistrationForm, LoginForm, ContactForm
 
-# Реализовать домашнюю страницу, вывода списка предлагаемых кофе и страницы с подробным описанием
+from django.core.mail import send_mail
+from django.conf import settings
+
+from django.contrib import messages
+
+from rest_framework import viewsets
+
+from acoffe.serializers import CoffeSerializer
 
 def home_page(request):
     return render(request, 'index.html')
@@ -76,3 +83,35 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('home_page')
+
+# EMAIL
+
+def contact_email(request): 
+    if request.method == 'POST': 
+        form = ContactForm(request.POST) 
+        if form.is_valid(): 
+            print(form.cleaned_data)
+            mail = send_mail(
+                form.cleaned_data['subject'],
+                form.cleaned_data['content'],
+                settings.EMAIL_HOST_USER,
+                ['kremnilandk@gmail.com'],
+                fail_silently=False
+                )
+            if mail: 
+                messages.success(request, 'Письмо успешно отправлено.') 
+                return redirect('list_coffe') 
+            else: 
+                messages.error(request, 'Письмо не удалось отправить, попробуйте позже.') 
+        else: 
+            messages.warning(request, 'Письмо неверно заполнено, перепроверьте внесенные данные.') 
+    else: 
+        form = ContactForm() 
+    return render(request, 'acoffe/email.html', {'form': form})
+
+# API
+
+class CoffeViewSet(viewsets.ModelViewSet):
+    queryset = coffe.objects.all()
+    # print(queryset)
+    serializer_class = CoffeSerializer
