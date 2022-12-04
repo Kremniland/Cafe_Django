@@ -2,6 +2,9 @@ from django.contrib import admin
 
 from acoffe.models import coffe, ingridient
 
+class IngridientInline(admin.TabularInline):
+    model = ingridient.coffe.through
+
 
 class CoffeAdmin(admin.ModelAdmin):
     list_display = ('name', 'volume', 'price','create_date','update_date','exists', 'ingridients')
@@ -9,9 +12,11 @@ class CoffeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_editable = ('price','exists')
     list_filter = ('exists',)
+    inlines = [IngridientInline,]
+    
 
 class IngridientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price')
-
+    list_display = ('name', 'price', 'exists')
+   
 admin.site.register(coffe, CoffeAdmin)
 admin.site.register(ingridient, IngridientAdmin)

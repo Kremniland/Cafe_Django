@@ -7,6 +7,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'coffe-api', v.CoffeViewSet)
+router.register(r'ingridient-api', v.IngridientViewSet)
 
 urlpatterns = [
     path('', v.home_page, name='home_page'),
@@ -19,6 +20,9 @@ urlpatterns = [
 
     # ListView
     path('list/', v.CoffeList.as_view(), name='list_coffe'),
+    path('delete/<int:coffe_id>', v.CoffeDelete.as_view(), name='delete_coffe'),
+    path('update/<int:coffe_id>', v.CoffeUpdate.as_view(), name='update_coffe'),
+    path('create/', v.CoffeCreate.as_view(), name='create_coffe'),
 
     path('list/<int:coffe_id>/', v.detail_coffe, name='detail_coffe'),
 

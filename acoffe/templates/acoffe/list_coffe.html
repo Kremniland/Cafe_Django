@@ -4,6 +4,11 @@
     {{ title }}
 {% endblock %}
 {% block content %}
+{% if perms.coffe.add_coffe %}
+    <div class="container">
+            <a href="{% url 'create_coffe' %}" class="btn btn-success btn-outline-info">Добавить кофе</a>
+    </div>
+{% endif %}
     <div class="container">
 
         <div class="row row-cols-1 row-cols-md-2 g-2">
@@ -15,7 +20,7 @@
                         {% if coffe.image %}
                             <img src="{{ coffe.image.url }}" class="card-img-top" height="450" alt="...">
                         {% else %}
-                            <img src="{% static 'image/coffe_1.jpg' %}" class="card-img-top" alt="...">
+                            <img src="{% static 'image/coffe_1.jpg' %}" class="card-img-top" height="450" alt="...">
                         {% endif %}
                         <div class="card-body">
                             <p class="card-text">{{ coffe.name }}</p>

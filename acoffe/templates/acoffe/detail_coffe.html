@@ -3,8 +3,30 @@
 
 {% block content %}
     <h2>{{ detail_coffe.name }}</h2>
-    <img src="{{ detail_coffe.image.url }}" width="300" alt="">
+    {% if detail_coffe.image %}
+        <img src="{{ detail_coffe.image.url }}" class="" width="350" alt="">
+    {% else %}
+        <img src="{% static 'image/coffe_1.jpg' %}" class="" width="350" alt="">
+    {% endif %}
     <h3>Цена: {{ detail_coffe.price }}</h3>
     <h3>Описание: {{ detail_coffe.description }}</h3>
-    <h3>Рецепт: {{ detail_coffe.recipe }}</h3>
+    <h3>
+        Состав: 
+        {% for ingridient in detail_coffe.ingridients.all %}
+            {{ ingridient }} 
+        {% endfor %}
+    </h3>
+    <div class="container">
+        <div class="list-group">
+
+            {% if perms.book.change_books %}
+                <a href="{% url 'update_coffe' detail_coffe.pk %}" class="btn btn-warning">Редактировать {{ detail_coffe.name }}</a>
+            {% endif %}
+
+            {% if perms.book.delete_books %}
+                <a href="{% url 'delete_coffe' detail_coffe.pk %}" class="btn btn-danger">Удалить {{ detail_coffe.name }}</a>             
+            {% endif %}
+
+        </div>
+    </div>
 {% endblock %}

@@ -7,7 +7,7 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_div }}
-        <button type="submit">Войти</button>
+        <button type="submit" class="btn btn-success btn-lg">Войти</button>
         {{ form.errors }}
     </form>    
 

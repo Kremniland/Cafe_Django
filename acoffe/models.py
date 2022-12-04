@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.urls import reverse
+
 
 class coffe(models.Model):
     name = models.CharField(max_length=50, verbose_name='Название')
@@ -12,6 +14,7 @@ class coffe(models.Model):
     exists = models.BooleanField(default=True)
     volume = models.IntegerField(default=200, blank=True, verbose_name='Объем')
 
+
     def __str__(self) -> str:
         return self.name
     
@@ -19,6 +22,10 @@ class coffe(models.Model):
         verbose_name = 'Кофе'
         verbose_name_plural = 'Кофе'
         ordering = ['name']
+
+    def get_absolute_url(self):
+        return reverse('detail_coffe', kwargs={'coffe_id': self.pk})
+
 
 
 class ingridient(models.Model):

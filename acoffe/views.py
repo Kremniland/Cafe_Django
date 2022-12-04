@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect
 
-from acoffe.models import coffe
+from acoffe.models import coffe, ingridient
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
 
 from django.core.paginator import Paginator
+
+from django.urls import reverse, reverse_lazy
 
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout
 
-from acoffe.forms import RegistrationForm, LoginForm, ContactForm
+from acoffe.forms import RegistrationForm, LoginForm, ContactForm, CoffeForm
 
 from django.core.mail import send_mail
 from django.conf import settings
@@ -18,7 +20,11 @@ from django.contrib import messages
 
 from rest_framework import viewsets
 
-from acoffe.serializers import CoffeSerializer
+from acoffe.serializers import CoffeSerializer, IngridientSerializer
+
+from django.contrib.auth.decorators import login_required, permission_required
+
+from django.utils.decorators import method_decorator
 
 def home_page(request):
     return render(request, 'index.html')
@@ -53,6 +59,32 @@ class CoffeList(ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Выбор кофе'
         return context
+
+class CoffeDelete(DeleteView):
+    model = coffe
+    template_name = 'acoffe/delete_coffe.html'
+    pk_url_kwarg = 'coffe_id'
+    success_url = reverse_lazy('list_coffe')
+
+    @method_decorator(permission_required('coffe.delete_coffe'))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class CoffeUpdate(UpdateView):
+    pass
+
+class CoffeCreate(CreateView):
+    model = coffe
+    form_class = CoffeForm
+    template_name = 'acoffe/create_coffe.html'
+    success_url = reverse_lazy('list_coffe')
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
 
 def user_registration(request):
     if request.method == 'POST':
@@ -115,6 +147,10 @@ class CoffeViewSet(viewsets.ModelViewSet):
     queryset = coffe.objects.all()
     # print(queryset)
     serializer_class = CoffeSerializer
+
+class IngridientViewSet(viewsets.ModelViewSet):
+    queryset = ingridient.objects.all()
+    serializer_class = IngridientSerializer
 
 # ERROR
 

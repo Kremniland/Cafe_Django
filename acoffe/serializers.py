@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from acoffe.models import coffe
+from acoffe.models import coffe, ingridient
 
 
 # class CoffeSerializer(serializers.ModelSerializer):
@@ -11,4 +11,9 @@ from acoffe.models import coffe
 class CoffeSerializer(serializers.ModelSerializer):
     class Meta:
         model = coffe
-        fields = '__all__'
+        fields = ['pk', 'name', 'description', 'price', 'exists',]
+
+class IngridientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ingridient
+        fields = ['pk', 'name', 'description', 'price', 'exists', 'coffe']

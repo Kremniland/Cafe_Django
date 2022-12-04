@@ -2,8 +2,9 @@
     <footer class="py-3 my-4">
       <ul class="nav justify-content-center border-bottom pb-3 mb-3">
         <li class="nav-item"><a href="{% url 'home_page' %}" class="nav-link px-2 text-muted">Домашняя страница</a></li>
-        <li class="nav-item"><a href="{% url 'list_coffe' %}" class="nav-link px-2 text-muted">Выбор кофе</a></li>
-      
+        {% if request.user.is_authenticated %}  
+          <li class="nav-item"><a href="{% url 'list_coffe' %}" class="nav-link px-2 text-muted">Выбор кофе</a></li>
+        {% endif %}
         {% if request.user.is_authenticated %}        
           <li class="nav-item"><a href="{% url 'contact_email' %}" class="nav-link px-2 text-muted">Книга жалоб и предложений</a></li>
         {% endif %}

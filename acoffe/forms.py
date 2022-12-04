@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 
+from acoffe.models import coffe
+
 class RegistrationForm(UserCreationForm):
     username = forms.CharField(
         label='Имя пользователя:',
@@ -49,3 +51,25 @@ class ContactForm(forms.Form):
         }
         )
     )
+
+class CoffeForm(forms.ModelForm):
+    class Meta:
+        model = coffe
+        fields = ['name', 'description', 'price']
+        widgets = {
+            'name': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+            'descriptions': forms.Textarea(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),
+            'price': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                }
+            ),            
+        }
