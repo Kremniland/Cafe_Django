@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'acoffe',
-    'rest_framework' # djangorestframework
+    'rest_framework', # djangorestframework
+    'basket',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,9 @@ EMAIL_HOST_USER = 'chausovo@mail.ru' # Почта отправителя
 EMAIL_HOST_PASSWORD = 'eHKXCCnWgAnpdRnfaecZ' # Пароль для внешнего приложения
 EMAIL_USE_TLS = False # Шифрование TSL
 EMAIL_USE_SSL = True # Шифрование SSL
+
+# SESSION
+# Место сохранения сессий а .files означает что в файл .signed_cookies - в промежуточную табл бд:
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+# название и переменная для нашей корзины
+BASKET_SESSION_ID = 'basket'

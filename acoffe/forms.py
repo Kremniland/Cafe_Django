@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 
-from acoffe.models import coffe
+from acoffe.models import coffe, ingridient
 
 class RegistrationForm(UserCreationForm):
     username = forms.CharField(
@@ -50,6 +50,42 @@ class ContactForm(forms.Form):
             'rows': 7,
         }
         )
+    )
+
+class CoffeAddForm(forms.Form):
+    name = forms.CharField(
+        max_length=150,
+        empty_value='Название',
+        label='Название',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Название',
+            }
+        )
+    )
+    price = forms.FloatField(
+        label='Цена',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+    description = forms.CharField(
+        label='Описание',
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Описание',
+                'aria-label':'With textarea',
+            }
+        )
+    )
+    ingridients = forms.ModelMultipleChoiceField(
+        label='Ингридиенты',
+        queryset=ingridient.objects.all(),
+        widget=forms.CheckboxSelectMultiple(),
     )
 
 class CoffeForm(forms.ModelForm):

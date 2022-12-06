@@ -11,7 +11,7 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout
 
-from acoffe.forms import RegistrationForm, LoginForm, ContactForm, CoffeForm
+from acoffe.forms import RegistrationForm, LoginForm, ContactForm, CoffeForm, CoffeAddForm
 
 from django.core.mail import send_mail
 from django.conf import settings
@@ -25,6 +25,9 @@ from acoffe.serializers import CoffeSerializer, IngridientSerializer
 from django.contrib.auth.decorators import login_required, permission_required
 
 from django.utils.decorators import method_decorator
+
+# BASKET
+from basket.forms import BasketAddProductForm
 
 def home_page(request):
     return render(request, 'index.html')
@@ -46,8 +49,29 @@ def detail_coffe(reqest, coffe_id):
     detail_coffe = coffe.objects.get(pk=coffe_id)
     context = {
         'detail_coffe': detail_coffe,
+# Добавляем корзину:
+        'basket_form': BasketAddProductForm(),
     }
     return render(reqest, 'acoffe/detail_coffe.html', context)
+
+def get_add_coffe(request):
+    if request.method == 'POST':
+        coffe_form = CoffeAddForm(request.POST)
+        if coffe_form.is_valid():
+            coffe_add = coffe.objects.create(
+                name=coffe_form.cleaned_data['name'],
+                description=coffe_form.cleaned_data['description'],
+                price=coffe_form.cleaned_data['price'],
+                )
+            for ingridient in coffe_form.cleaned_data['ingridients']:
+                coffe_add.ingridients.add(ingridient)
+            return redirect('list_coffe')           
+    else:
+        coffe_form = CoffeAddForm()
+    context = {
+        'form': coffe_form,
+    }
+    return render(request, 'acoffe/create_coffe.html', context)
 
 class CoffeList(ListView):
     model = coffe
@@ -72,7 +96,15 @@ class CoffeDelete(DeleteView):
 
 
 class CoffeUpdate(UpdateView):
-    pass
+    model = coffe
+    form_class = CoffeForm
+    template_name = 'acoffe/update_coffe.html'
+    pk_url_kwarg = 'coffe_id'
+    success_url = reverse_lazy('list_coffe')
+
+    @method_decorator(permission_required('coffe.change_coffe'))
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
 
 class CoffeCreate(CreateView):
     model = coffe

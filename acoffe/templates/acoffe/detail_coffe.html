@@ -17,6 +17,13 @@
         {% endfor %}
     </h3>
     <div class="container">
+        <form method="post" action="{% url 'add_basket_prod' detail_coffe.pk %}">
+            {% csrf_token %}
+            {{ basket_form }}
+            <input type="submit" class="btn btn-success" value="Добавить в корзину">
+        </form>
+    </div>
+    <div class="container">
         <div class="list-group">
 
             {% if perms.book.change_books %}
