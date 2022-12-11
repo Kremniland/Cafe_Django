@@ -3,11 +3,6 @@ from rest_framework import serializers
 from acoffe.models import coffe, ingridient
 
 
-# class CoffeSerializer(serializers.ModelSerializer):
-#     class Mets:
-#         model = coffe
-#         fields = ['name', 'price', 'recipe', 'exists']
-
 class CoffeSerializer(serializers.ModelSerializer):
     class Meta:
         model = coffe
@@ -17,3 +12,4 @@ class IngridientSerializer(serializers.ModelSerializer):
     class Meta:
         model = ingridient
         fields = ['pk', 'name', 'description', 'price', 'exists', 'coffe']
+        

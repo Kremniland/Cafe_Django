@@ -1,14 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from acoffe.models import coffe, ingridient
 
-from django.views.generic import ListView, DetailView, DeleteView, UpdateView, CreateView
+from django.views.generic import ListView, DeleteView, UpdateView, CreateView
 
-from django.core.paginator import Paginator
+from django.urls import reverse_lazy
 
-from django.urls import reverse, reverse_lazy
-
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login, logout
 
 from acoffe.forms import RegistrationForm, LoginForm, ContactForm, CoffeForm, CoffeAddForm
@@ -16,34 +13,25 @@ from acoffe.forms import RegistrationForm, LoginForm, ContactForm, CoffeForm, Co
 from django.core.mail import send_mail
 from django.conf import settings
 
+# MESSAGES
 from django.contrib import messages
 
-from rest_framework import viewsets
-
+# API
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from acoffe.serializers import CoffeSerializer, IngridientSerializer
 
+# REGISTER PERMISSION
 from django.contrib.auth.decorators import login_required, permission_required
-
 from django.utils.decorators import method_decorator
 
 # BASKET
 from basket.forms import BasketAddProductForm
 
+
 def home_page(request):
-    return render(request, 'index.html')
-
-# def list_coffe(request):
-#     list_coffe = coffe.objects.all()
-#     paginator = Paginator(list_coffe, 2)
-#     page_num = request.GET.get('page', 1)
-#     page_obj = paginator.get_page(page_num)
-
-#     context = {
-#         'list_coffe': list_coffe,
-#         'page_obj': page_obj,
-#         'title': 'Выбор кофе',
-#     }
-#     return render(request, 'acoffe/list_coffe.html', context)
+    return render(request, 'index.html', {'title': 'Домашняя страница'})
 
 def detail_coffe(reqest, coffe_id):
     detail_coffe = coffe.objects.get(pk=coffe_id)
@@ -120,20 +108,17 @@ class CoffeCreate(CreateView):
 
 def user_registration(request):
     if request.method == 'POST':
-        # form = UserCreationForm(data=request.POST)
         form = RegistrationForm(data=request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('log in')
     else:
-        # form = UserCreationForm()
         form = RegistrationForm()        
     return render(request, 'acoffe/auth/registration.html', {'form': form})
 
 def user_login(request):
     if request.method == 'POST':
-        # form = AuthenticationForm(data=request.POST)
         form = LoginForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
@@ -171,13 +156,42 @@ def contact_email(request):
             messages.warning(request, 'Письмо неверно заполнено, перепроверьте внесенные данные.') 
     else: 
         form = ContactForm() 
-    return render(request, 'acoffe/email.html', {'form': form})
+    return render(request, 'acoffe/email.html', {'form': form, 'title': 'Отзывы'})
 
 # API
+@api_view(['GET', 'POST']) # Добавит csrf_token при обращении к апи
+def coffe_api_list(request):
+    if request.method == 'GET':
+        coffe_list = coffe.objects.all()
+        serializer = CoffeSerializer(coffe_list, many=True)
+        return Response({'coffe': serializer.data})
+    elif request.method == 'POST':
+        serializer = CoffeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def coffe_api_detail(request, pk):
+    coffe_obj = get_object_or_404(coffe, pk=pk)
+    if request.method == 'GET':
+        serializer = CoffeSerializer(coffe_obj)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = CoffeSerializer(coffe_obj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Данные успешно обновлены', 'coffe': serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        coffe_obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else: 
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 class CoffeViewSet(viewsets.ModelViewSet):
     queryset = coffe.objects.all()
-    # print(queryset)
     serializer_class = CoffeSerializer
 
 class IngridientViewSet(viewsets.ModelViewSet):

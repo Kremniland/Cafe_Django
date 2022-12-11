@@ -36,6 +36,7 @@ class ingridient(models.Model):
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления записи')
     update_date = models.DateTimeField(auto_now=True, verbose_name='Дата обновления записи')
     exists = models.BooleanField(default=True)
+    
     coffe = models.ManyToManyField(coffe, related_name='ingridients')
 
     def __str__(self) -> str:

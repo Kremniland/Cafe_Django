@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% block title %} {{ detail_coffe.name }} {% endblock %}
 {% block content %}
     <h2>{{ detail_coffe.name }}</h2>
     {% if detail_coffe.image %}
